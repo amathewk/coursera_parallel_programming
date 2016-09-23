@@ -59,20 +59,33 @@ object ParallelParenthesesBalancing {
    */
   def parBalance(chars: Array[Char], threshold: Int): Boolean = {
 
-    def traverse(idx: Int, until: Int, openCount: Int, closeCount: Int) : Int = {
-      if (chars.isEmpty && idx == until -1) return true
-      if (chars.isEmpty && count != 0) return false
-      if (count < 0) return false
-      chars.head match {
-        case '(' =>  balance(chars.tail, count+1)
-        case ')' =>  balance(chars.tail, count-1)
-        case _ => balance(chars.tail, count)
-      }
-    }
+    def traverse(idx: Int, until: Int, openCount: Int, closeCount: Int) : Int = ???
+//    {
+//      if (chars.isEmpty && idx == until -1) return true
+//      if (chars.isEmpty && count != 0) return false
+//      if (count < 0) return false
+//      chars.head match {
+//        case '(' =>  balance(chars.tail, count+1)
+//        case ')' =>  balance(chars.tail, count-1)
+//        case _ => balance(chars.tail, count)
+//      }
+//    }
 
-    def reduce(from: Int, until: Int) /*: ???*/ = {
-      ???
-    }
+    def reduce(from: Int, until: Int) /*: Int*/ = ???
+//    {
+//      if (until - from < 1) return 0
+//
+//      if (until - from == 1) {
+//        chars(from) match {
+//          case '(' => 1
+//          case ')' => -1
+//        }
+//      }
+//
+//      val split = (until - from) / 2
+//      val (a,b) = parallel(reduce(from, from+split), reduce(from+split, until))
+//
+//    }
 
     reduce(0, chars.length) == ???
   }
