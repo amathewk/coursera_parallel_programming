@@ -57,9 +57,18 @@ object LineOfSight {
   /** Traverses the specified part of the array and returns the maximum angle.
    */
   def upsweepSequential(input: Array[Float], from: Int, until: Int): Float = {
-    val a = input.view.zipWithIndex.slice(from, until)
-    val b = a map { case (v, i) => if (i==0) 0 else v/i}
-    b.foldLeft(Float.MinValue)(max)
+//    val a = input.view.zipWithIndex.slice(from, until)
+//    val b = a map { case (v, i) => if (i==0) 0 else v/i}
+//    b.foldLeft(Float.MinValue)(max)
+
+    var idx = from
+    var maxAngle = Float.MinValue
+    while (idx < until) {
+      val currAngle = if (idx == 0) 0 else input(idx) / idx
+      maxAngle = max(currAngle, maxAngle)
+      idx += 1
+    }
+    maxAngle
   }
 
   /** Traverses the part of the array starting at `from` and until `end`, and
@@ -74,7 +83,7 @@ object LineOfSight {
     threshold: Int): Tree = {
     if (end - from <= threshold) return Leaf(from, end, upsweepSequential(input, from, end))
 
-    val split = (end - from) / 2
+    val split = (end + from) / 2
     val (l,r) = parallel(upsweep(input, from, split, threshold), upsweep(input, split, end, threshold))
     Node(l,r)
   }
@@ -85,11 +94,22 @@ object LineOfSight {
    */
   def downsweepSequential(input: Array[Float], output: Array[Float],
     startingAngle: Float, from: Int, until: Int): Unit = {
-    val a = input.view.zipWithIndex.slice(from, until)
-    val b = a map { case (v, i) => if (i==0) 0 else v/i}
-    val c = b.scanLeft(startingAngle)(max)
-    c foreach println
-    c.copyToArray(output)
+//    val a = input.view.zipWithIndex.slice(from, until)
+//    val b = a map { case (v, i) => if (i==0) 0 else v/i}
+//    val c = b.scanLeft(startingAngle)(max)
+////    c foreach println
+//    c.copyToArray(output)
+//
+
+    var maxAngle = startingAngle
+    var idx = from
+    while(idx < until) {
+      val currAngle = if (idx==0) 0 else input(idx)/idx
+      maxAngle = max(currAngle, maxAngle)
+      output(idx) = maxAngle
+      idx += 1
+    }
+
   }
 
   /** Pushes the maximum angle in the prefix of the array to each leaf of the

@@ -45,49 +45,71 @@ object ParallelParenthesesBalancing {
   }
 
   private def balance(chars: Array[Char], count:Int): Boolean = {
-    if (chars.isEmpty && count == 0) return true
-    if (chars.isEmpty && count != 0) return false
-    if (count < 0) return false
-    chars.head match {
-      case '(' =>  balance(chars.tail, count+1)
-      case ')' =>  balance(chars.tail, count-1)
-      case _ => balance(chars.tail, count)
+//    if (chars.isEmpty && count == 0) return true
+//    if (chars.isEmpty && count != 0) return false
+//    if (count < 0) return false
+//    chars.head match {
+//      case '(' =>  balance(chars.tail, count+1)
+//      case ')' =>  balance(chars.tail, count-1)
+//      case _ => balance(chars.tail, count)
+//    }
+
+    var idx:Int = 0
+    var count:Int = 0
+    while (idx < chars.size) {
+      chars(idx) match {
+        case '(' =>  count += 1
+        case ')' =>  if (count < 1) return false else count -= 1
+        case _ =>
+      }
+      idx += 1
     }
+
+    count == 0
   }
 
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
    */
   def parBalance(chars: Array[Char], threshold: Int): Boolean = {
 
-    def traverse(idx: Int, until: Int, openCount: Int, closeCount: Int) : Int = ???
-//    {
-//      if (chars.isEmpty && idx == until -1) return true
-//      if (chars.isEmpty && count != 0) return false
-//      if (count < 0) return false
-//      chars.head match {
-//        case '(' =>  balance(chars.tail, count+1)
-//        case ')' =>  balance(chars.tail, count-1)
-//        case _ => balance(chars.tail, count)
-//      }
-//    }
-
-    def reduce(from: Int, until: Int) /*: Int*/ = ???
-//    {
-//      if (until - from < 1) return 0
-//
-//      if (until - from == 1) {
-//        chars(from) match {
-//          case '(' => 1
-//          case ')' => -1
+    def traverse(idx: Int, until: Int) : (Int, Int) =
+    {
+//      def matcher(chars:List[Char], open: Int, close: Int) : (Int, Int) = {
+//        if (chars.isEmpty) return (open,close)
+//        chars.head match {
+//          case '(' => matcher(chars.tail, open + 1, close)
+//          case ')' => if (open > 0) matcher(chars.tail, open - 1, close) else matcher(chars.tail, open, close + 1)
+//          case _ => matcher(chars.tail, open,close)
 //        }
 //      }
-//
-//      val split = (until - from) / 2
-//      val (a,b) = parallel(reduce(from, from+split), reduce(from+split, until))
-//
-//    }
+//      def charList = chars.toList.slice(idx, until)
+//      matcher(charList, 0, 0)
 
-    reduce(0, chars.length) == ???
+      var ind:Int = idx
+      var openCount = 0
+      var closeCount = 0
+      while(ind < until) {
+        chars(ind) match {
+          case '(' => openCount += 1
+          case ')' => if (openCount > 0) openCount -= 1 else closeCount += 1
+          case _ =>
+        }
+        ind += 1
+      }
+      (openCount, closeCount)
+    }
+
+    def reduce(from: Int, until: Int) : (Int, Int) =
+    {
+      if (until - from < threshold) return traverse(from, until)
+      else {
+        val split = (until + from) / 2
+        val (a,b) = parallel(reduce(from, split), reduce(split, until))
+        val matched = scala.math.min(a._1, b._2)
+        (a._1 + b._1 - matched, a._2 + b._2 - matched)
+      }
+    }
+    reduce(0, chars.length) == (0,0)
   }
 
   // For those who want more:
